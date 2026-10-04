@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AR Menü</title>
 
-    <!-- Google Model Viewer -->
     <script
       type="module"
       src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
@@ -141,7 +140,6 @@
     </style>
   </head>
   <body>
-    <!-- Ürün Butonları -->
     <div class="menu">
       <button class="btn active" id="b1" onclick="changeItem('urun1')">
         Hamburger
@@ -149,21 +147,17 @@
       <button class="btn" id="b2" onclick="changeItem('urun2')">Pizza</button>
     </div>
 
-    <!-- 3D Model Kutusu -->
     <div class="box">
-      <!--
-      src: Android için
-      ios-src: iPhone'lar için
-      ar-modes: Bütün telefonlarda en iyi AR motorunu seçer
+      <!-- 
+      - Büyütme küçültme engeli (ar-scale) kaldırıldı!
+      - Zorunlu zemin arama (ar-placement) kaldırıldı! 
+      - ios-src kaldırıldı: iPhone için mükemmel merkezlenmiş model otomatik üretilecek! 
     -->
       <model-viewer
         id="mv"
         src="assets/urun1.glb"
-        ios-src="assets/urun1.usdz"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        ar-placement="floor"
-        ar-scale="fixed"
         camera-controls
         auto-rotate
         rotation-per-second="25deg"
@@ -174,7 +168,6 @@
       </model-viewer>
     </div>
 
-    <!-- Masada Gör Butonu -->
     <button id="ar-trigger" onclick="handleAR()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path
@@ -184,7 +177,6 @@
       Masada Gör
     </button>
 
-    <!-- QR Popup -->
     <div id="qr-overlay" onclick="closeQR(event)">
       <div class="modal">
         <h3 id="qr-name">Hamburger</h3>
@@ -203,29 +195,22 @@
       const mv = document.getElementById("mv");
       let current = "urun1";
 
-      // Hem GLB hem USDZ yolları tanımlandı
       const items = {
         urun1: {
           name: "Hamburger",
           path: "assets/urun1.glb",
-          iosPath: "assets/urun1.usdz",
           orient: "0deg 0deg 0deg",
         },
         urun2: {
           name: "Pizza",
           path: "assets/urun2.glb",
-          iosPath: "assets/urun2.usdz",
           orient: "0deg 0deg 0deg",
         },
       };
 
       function changeItem(key) {
         current = key;
-        // Android ve Web için
         mv.setAttribute("src", items[key].path);
-        // Apple cihazlar için
-        mv.setAttribute("ios-src", items[key].iosPath);
-
         mv.setAttribute("orientation", items[key].orient);
         mv.cameraOrbit = "0deg 75deg 105%";
 
