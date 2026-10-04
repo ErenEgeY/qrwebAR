@@ -4,96 +4,142 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AR Menü</title>
+
+    <!-- Google Model Viewer -->
     <script
       type="module"
       src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
     ></script>
+
     <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
       body {
         margin: 0;
-        padding: 20px 0;
-        background: #18181b;
+        padding: 24px 0;
+        background: #121214;
         color: #fff;
-        font-family: sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
       }
       .menu {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
       }
       .btn {
-        padding: 10px 18px;
-        margin: 0 5px;
+        padding: 10px 22px;
         font-size: 14px;
-        font-weight: bold;
-        border-radius: 20px;
-        border: 1px solid #444;
-        background: #27272a;
-        color: #fff;
+        font-weight: 600;
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: #232328;
+        color: #ccc;
         cursor: pointer;
+        transition: all 0.2s ease;
       }
       .btn.active {
         background: #fff;
         color: #000;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
       }
-      /* 3D Model Kutusu - Kesin boyutlu */
+      /* 3D Model Kutusu */
       .box {
-        width: 320px;
-        height: 320px;
-        max-width: 90vw;
-        margin: 0 auto 20px auto;
-        background: #27272a;
-        border-radius: 20px;
-        border: 1px solid #3f3f46;
+        width: 340px;
+        height: 340px;
+        max-width: 88vw;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
       }
       model-viewer {
         width: 100%;
         height: 100%;
+        outline: none;
+        --poster-color: transparent;
       }
       /* Masada Gör Butonu */
       #ar-trigger {
-        display: inline-block;
-        background: #f97316;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ff5722;
         color: #fff;
-        padding: 14px 28px;
+        padding: 15px 32px;
         font-size: 16px;
-        font-weight: bold;
-        border-radius: 30px;
+        font-weight: 700;
+        border-radius: 40px;
         border: none;
         cursor: pointer;
-        box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+        box-shadow: 0 8px 24px rgba(255, 87, 34, 0.45);
+        transition: transform 0.2s ease;
       }
-      /* Modal */
+      #ar-trigger:active {
+        transform: scale(0.96);
+      }
+      /* QR Popup */
       #qr-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         align-items: center;
         justify-content: center;
-        z-index: 9999;
+        z-index: 99999;
       }
       .modal {
-        background: #27272a;
-        padding: 24px;
-        border-radius: 20px;
-        max-width: 300px;
+        background: #1c1c1f;
+        padding: 28px;
+        border-radius: 24px;
+        max-width: 320px;
+        width: 85%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+      }
+      .modal h3 {
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+      .modal p {
+        font-size: 13px;
+        color: #999;
+        margin-bottom: 16px;
       }
       .modal img {
         width: 180px;
         height: 180px;
         background: #fff;
-        padding: 10px;
-        border-radius: 12px;
-        margin: 15px 0;
+        padding: 12px;
+        border-radius: 14px;
+        display: block;
+        margin: 0 auto 18px auto;
       }
       .close-btn {
-        background: #3f3f46;
+        background: rgba(255, 255, 255, 0.12);
         color: #fff;
         border: none;
-        padding: 8px 20px;
-        border-radius: 15px;
+        padding: 9px 24px;
+        border-radius: 20px;
         cursor: pointer;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -106,31 +152,47 @@
       <button class="btn" id="b2" onclick="changeItem('urun2')">Pizza</button>
     </div>
 
-    <!-- Model Kutusu -->
+    <!-- 3D Model Kutusu -->
     <div class="box">
+      <!--
+      ar: AR modunu açar
+      ar-placement="floor": Modeli masaya/zemine kilitler, havada asılı kalmasını önler
+      ar-scale="fixed": Modelin boyutu sabitlenir, koyduğun noktada çivi gibi durur
+      ar-modes="scene-viewer webxr quick-look": Android ve iOS zemin tarayıcılarını optimize eder
+    -->
       <model-viewer
         id="mv"
         src="assets/urun1.glb"
         ar
-        ar-modes="webxr scene-viewer quick-look"
+        ar-modes="scene-viewer webxr quick-look"
+        ar-placement="floor"
+        ar-scale="fixed"
         camera-controls
         auto-rotate
-        rotation-per-second="30deg"
-        shadow-intensity="1"
+        rotation-per-second="25deg"
+        shadow-intensity="1.5"
+        shadow-softness="0.5"
+        orientation="0deg 0deg 0deg"
       >
       </model-viewer>
     </div>
 
-    <!-- Masada Gör -->
-    <button id="ar-trigger" onclick="handleAR()">Masada Gör</button>
+    <!-- Masada Gör Butonu -->
+    <button id="ar-trigger" onclick="handleAR()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M3 4c0-1.1.9-2 2-2h4v2H5v4H3V4zm0 16v-4h2v4h4v2H5c-1.1 0-2-.9-2-2zm18 0c0 1.1-.9 2-2 2h-4v-2h4v-4h2v4zM21 4v4h-2V4h-4V2h4c1.1 0 2 .9 2 2zM12 8l-5 3v6l5 3 5-3v-6l-5-3zm0 2.2 3.3 1.8L12 13.8 8.7 12 12 10.2z"
+        />
+      </svg>
+      Masada Gör
+    </button>
 
     <!-- QR Popup -->
     <div id="qr-overlay" onclick="closeQR(event)">
       <div class="modal">
         <h3 id="qr-name">Hamburger</h3>
-        <p style="font-size: 13px; color: #a1a1aa">QR kodu telefonunla okut:</p>
+        <p>Kameranla QR kodu tara, masanın üzerinde incele!</p>
         <img id="qr-pic" src="" alt="QR" />
-        <br />
         <button
           class="close-btn"
           onclick="document.getElementById('qr-overlay').style.display = 'none'"
@@ -145,23 +207,24 @@
       let current = "urun1";
 
       const items = {
-        urun1: { name: "Hamburger", path: "assets/urun1.glb" },
-        urun2: { name: "Pizza", path: "assets/urun2.glb" },
+        urun1: {
+          name: "Hamburger",
+          path: "assets/urun1.glb",
+          orient: "0deg 0deg 0deg",
+        },
+        urun2: {
+          name: "Pizza",
+          path: "assets/urun2.glb",
+          orient: "0deg 0deg 0deg",
+        },
       };
-
-      // Model yükleme hatasını yakala ve ekranda bildir
-      mv.addEventListener("error", (event) => {
-        console.error("Model yükleme hatası:", event);
-        alert(
-          "Model yüklenemedi! Dosya yolu: " +
-            mv.getAttribute("src") +
-            " bulunamadı (404). Klasör adını ve GLB adını kontrol et.",
-        );
-      });
 
       function changeItem(key) {
         current = key;
         mv.setAttribute("src", items[key].path);
+        mv.setAttribute("orientation", items[key].orient);
+        mv.cameraOrbit = "0deg 75deg 105%";
+
         document
           .getElementById("b1")
           .classList.toggle("active", key === "urun1");
@@ -186,7 +249,7 @@
         url.searchParams.set("item", current);
 
         qrPic.src =
-          "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+          "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
           encodeURIComponent(url.toString());
         overlay.style.display = "flex";
       }
@@ -197,6 +260,7 @@
         }
       }
 
+      // Mobilde QR ile gelindiyse ürünü yükle
       window.addEventListener("DOMContentLoaded", () => {
         const p = new URLSearchParams(window.location.search).get("item");
         if (p && items[p]) changeItem(p);
@@ -204,4 +268,3 @@
     </script>
   </body>
 </html>
-
