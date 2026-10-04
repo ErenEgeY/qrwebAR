@@ -19,8 +19,8 @@
       }
       html,
       body {
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
         background-color: #121214 !important;
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -31,20 +31,20 @@
         justify-content: center;
       }
 
-      /* Üst Ürün Seçim Menüsü */
+      /* Üst Menü */
       #menu-nav {
         position: fixed;
-        top: 24px;
+        top: 20px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 12px;
+        gap: 10px;
         background: rgba(255, 255, 255, 0.12);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         padding: 6px;
         border-radius: 40px;
-        z-index: 99999;
+        z-index: 999999;
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
@@ -66,25 +66,25 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
 
-      /* Yarı Boyutlu Model Kutusu */
+      /* Yarı Boyutlu Model Vitrini */
       #card-wrapper {
-        width: 380px !important;
-        max-width: 90vw !important;
-        height: 380px !important;
-        max-height: 48vh !important;
+        width: 360px !important;
+        max-width: 88vw !important;
+        height: 360px !important;
+        max-height: 45vh !important;
         background: radial-gradient(
           circle,
-          rgba(255, 255, 255, 0.06) 0%,
-          rgba(0, 0, 0, 0.4) 100%
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(0, 0, 0, 0.5) 100%
         );
         border-radius: 28px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        margin-bottom: 70px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        margin-bottom: 60px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
       }
 
       model-viewer {
@@ -94,21 +94,21 @@
         --poster-color: transparent;
       }
 
-      /* Masada Gör Butonu (Ekranın alt ortasında sabit) */
+      /* Masada Gör Butonu */
       #ar-btn {
         position: fixed;
-        bottom: 36px;
+        bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
         background: #ff5722;
         color: #ffffff;
         border: none;
-        padding: 15px 32px;
+        padding: 14px 30px;
         font-size: 16px;
         font-weight: 700;
         border-radius: 50px;
         cursor: pointer;
-        z-index: 99999;
+        z-index: 999999;
         box-shadow: 0 8px 24px rgba(255, 87, 34, 0.45);
         display: flex;
         align-items: center;
@@ -123,23 +123,23 @@
       #qr-modal {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.82);
+        background: rgba(0, 0, 0, 0.85);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         display: none;
         align-items: center;
         justify-content: center;
-        z-index: 1000000;
+        z-index: 10000000;
       }
 
       .modal-box {
-        background: #1e1e24;
+        background: #1c1c1e;
         padding: 28px;
         border-radius: 24px;
         text-align: center;
         width: 320px;
         border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
       }
 
       .modal-box h3 {
@@ -169,7 +169,7 @@
       }
 
       .close-modal-btn {
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.15);
         border: none;
         color: #fff;
         padding: 9px 24px;
@@ -199,7 +199,7 @@
     <div id="card-wrapper">
       <model-viewer
         id="main-viewer"
-        src="assets/urun1.glb"
+        src="./assets/urun1.glb"
         alt="3D Menü"
         ar
         ar-modes="webxr scene-viewer quick-look"
@@ -242,13 +242,13 @@
       const products = {
         urun1: {
           title: "Hamburger",
-          path: "assets/urun1.glb",
+          path: "./assets/urun1.glb",
           orient: "0deg 0deg 0deg",
         },
         urun2: {
           title: "Pizza",
-          path: "assets/urun2.glb",
-          orient: "180deg 0deg 0deg", // Pizzanın tabanı tersse 180deg, düzse 0deg yap
+          path: "./assets/urun2.glb",
+          orient: "0deg 0deg 0deg", // Düzeltildi: Artık ters dönmeyecek
         },
       };
 
@@ -260,7 +260,6 @@
         viewer.setAttribute("orientation", data.orient);
         viewer.cameraOrbit = "0deg 75deg 105%";
 
-        // Buton renkleri
         document
           .querySelectorAll(".nav-btn")
           .forEach((b) => b.classList.remove("active"));
@@ -268,14 +267,12 @@
       }
 
       function openArAction() {
-        // Mobilde miyiz?
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         if (isMobile) {
           viewer.activateAR();
           return;
         }
 
-        // Masaüstünde QR göster
         const modal = document.getElementById("qr-modal");
         const title = document.getElementById("qr-title");
         const img = document.getElementById("qr-img");
@@ -297,7 +294,6 @@
         if (e.target.id === "qr-modal") closeQrModal();
       }
 
-      // Mobilde QR'dan gelindiğinde direkt o yemeği seç
       window.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
         const requestedItem = params.get("item");
