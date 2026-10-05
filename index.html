@@ -84,7 +84,9 @@
         border: none;
         cursor: pointer;
         box-shadow: 0 8px 24px rgba(255, 87, 34, 0.45);
-        text-decoration: none;
+      }
+      #ar-trigger:active {
+        transform: scale(0.96);
       }
       #qr-overlay {
         display: none;
@@ -125,6 +127,7 @@
     </style>
   </head>
   <body>
+    <!-- Ürün Butonları -->
     <div class="menu">
       <button class="btn active" id="b1" onclick="changeItem('urun1')">
         Hamburger
@@ -132,7 +135,12 @@
       <button class="btn" id="b2" onclick="changeItem('urun2')">Pizza</button>
     </div>
 
+    <!-- 3D Model Kutusu -->
     <div class="box">
+      <!-- 
+      ar-placement="floor": Kesin zemin zorunluluğu
+      quick-look-browsers="safari": iOS için native köprü
+    -->
       <model-viewer
         id="mv"
         src="assets/urun1.glb"
@@ -140,6 +148,7 @@
         ar
         ar-modes="quick-look scene-viewer webxr"
         ar-placement="floor"
+        quick-look-browsers="safari"
         camera-controls
         auto-rotate
         rotation-per-second="25deg"
@@ -148,15 +157,17 @@
       </model-viewer>
     </div>
 
-    <a id="ar-trigger" href="javascript:void(0)" onclick="handleAR()">
+    <!-- Masada Gör Butonu -->
+    <button id="ar-trigger" onclick="handleAR()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path
           d="M3 4c0-1.1.9-2 2-2h4v2H5v4H3V4zm0 16v-4h2v4h4v2H5c-1.1 0-2-.9-2-2zm18 0c0 1.1-.9 2-2 2h-4v-2h4v-4h2v4zM21 4v4h-2V4h-4V2h4c1.1 0 2 .9 2 2zM12 8l-5 3v6l5 3 5-3v-6l-5-3zm0 2.2 3.3 1.8L12 13.8 8.7 12 12 10.2z"
         />
       </svg>
       Masada Gör
-    </a>
+    </button>
 
+    <!-- QR Popup -->
     <div id="qr-overlay" onclick="closeQR(event)">
       <div class="modal">
         <h3 id="qr-name">Hamburger</h3>
@@ -186,8 +197,7 @@
         urun2: {
           name: "Pizza",
           glb: "assets/urun2.glb",
-          usdz: "assets/urun2.usdz#allowsContentScaling=1",
-          orient: "0deg 0deg 0deg",
+          usdz: "assets/urun2.usdz",
         },
       };
 
@@ -195,7 +205,7 @@
         current = key;
         mv.setAttribute("src", items[key].glb);
         mv.setAttribute("ios-src", items[key].usdz);
-        mv.cameraOrbit = items[key].orient || "0deg 75deg 105%";
+        mv.cameraOrbit = "0deg 75deg 105%";
 
         document
           .getElementById("b1")
@@ -206,32 +216,15 @@
       }
 
       function handleAR() {
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-        if (isIOS) {
-          // iOS Quick Look: allowsContentScaling=1 ile ölçeklemeyi serbest bırakır,
-          // rel="ar" doğrudan yüzey çapasını (surface anchor) tetikler.
-          const anchor = document.createElement("a");
-          anchor.setAttribute("rel", "ar");
-          anchor.setAttribute(
-            "href",
-            items[current].usdz + "#allowsContentScaling=1",
-          );
-
-          const img = document.createElement("img");
-          anchor.appendChild(img);
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          return;
-        }
-
-        if (isAndroid) {
+        if (isMobile) {
+          // Model Viewer'ın kendi resmi metodu iOS'ta Quick Look'u doğru sınırlarla tetikler
           mv.activateAR();
           return;
         }
 
+        // Masaüstü için QR
         const overlay = document.getElementById("qr-overlay");
         const qrPic = document.getElementById("qr-pic");
         document.getElementById("qr-name").innerText =
