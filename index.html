@@ -2,7 +2,10 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
     <title>AR Menü</title>
 
     <script
@@ -137,18 +140,18 @@
 
     <!-- 3D Model Kutusu -->
     <div class="box">
-      <!-- 
-      ar-placement="floor": Kesin zemin zorunluluğu
-      quick-look-browsers="safari": iOS için native köprü
+      <!--
+      WebXR öncelikli hit-test motoru:
+      - ar-modes="webxr quick-look scene-viewer": Tarayıcı düzeyinde zemin aramasını zorunlu kılar.
+      - ar-placement="floor": Zemin bulunana kadar modeli serbest uzayda onaylamaz.
     -->
       <model-viewer
         id="mv"
         src="assets/urun1.glb"
         ios-src="assets/urun1.usdz"
         ar
-        ar-modes="quick-look scene-viewer webxr"
+        ar-modes="webxr quick-look scene-viewer"
         ar-placement="floor"
-        quick-look-browsers="safari"
         camera-controls
         auto-rotate
         rotation-per-second="25deg"
@@ -219,12 +222,10 @@
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
         if (isMobile) {
-          // Model Viewer'ın kendi resmi metodu iOS'ta Quick Look'u doğru sınırlarla tetikler
           mv.activateAR();
           return;
         }
 
-        // Masaüstü için QR
         const overlay = document.getElementById("qr-overlay");
         const qrPic = document.getElementById("qr-pic");
         document.getElementById("qr-name").innerText =
