@@ -6,249 +6,418 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <title>AR Menü</title>
+    <title>Bella Pizza & AR Menü</title>
 
+    <!-- Google Model Viewer -->
     <script
       type="module"
       src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
     ></script>
 
     <style>
+      :root {
+        --primary: #ff5722;
+        --bg: #121214;
+        --card-bg: #1e1e24;
+        --text-muted: #9e9ea7;
+      }
+
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        -webkit-tap-highlight-color: transparent;
       }
+
       body {
-        margin: 0;
-        padding: 24px 0;
-        background: #121214;
-        color: #fff;
+        background-color: var(--bg);
+        color: #ffffff;
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        text-align: center;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        min-height: 100vh;
+        padding-bottom: 40px;
       }
-      .menu {
-        margin-bottom: 20px;
+
+      header {
+        width: 100%;
+        max-width: 480px;
+        padding: 20px 20px 10px 20px;
         display: flex;
-        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
       }
-      .btn {
-        padding: 10px 22px;
-        font-size: 14px;
+
+      .brand {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .brand span {
+        color: var(--primary);
+      }
+
+      .table-badge {
+        font-size: 12px;
+        background: rgba(255, 87, 34, 0.15);
+        color: var(--primary);
+        padding: 4px 10px;
+        border-radius: 12px;
         font-weight: 600;
-        border-radius: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: #232328;
-        color: #ccc;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        border: 1px solid rgba(255, 87, 34, 0.3);
       }
-      .btn.active {
-        background: #fff;
-        color: #000;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-      }
-      .box {
-        width: 340px;
-        height: 340px;
-        max-width: 88vw;
+
+      /* 3D Model Vitrin Alanı */
+      #viewer-container {
+        width: 90%;
+        max-width: 420px;
+        height: 310px;
         background: radial-gradient(
           circle,
-          rgba(255, 255, 255, 0.08) 0%,
-          rgba(0, 0, 0, 0.5) 100%
+          rgba(255, 255, 255, 0.06) 0%,
+          rgba(0, 0, 0, 0.6) 100%
         );
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        margin-top: 8px;
         overflow: hidden;
-        margin-bottom: 24px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
       }
+
       model-viewer {
         width: 100%;
         height: 100%;
         outline: none;
+        --poster-color: transparent;
       }
-      #ar-trigger {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: #ff5722;
-        color: #fff;
-        padding: 15px 32px;
-        font-size: 16px;
+
+      /* Seçili Ürün Kartı */
+      #active-info {
+        width: 90%;
+        max-width: 420px;
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .info-left h2 {
+        font-size: 19px;
         font-weight: 700;
-        border-radius: 40px;
+      }
+
+      .info-left p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        max-width: 270px;
+        line-height: 1.35;
+      }
+
+      .info-price {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--primary);
+        white-space: nowrap;
+      }
+
+      /* Masada Gör AR Butonu */
+      #ar-trigger {
+        width: 90%;
+        max-width: 420px;
+        background: var(--primary);
+        color: #fff;
         border: none;
-        cursor: pointer;
-        box-shadow: 0 8px 24px rgba(255, 87, 34, 0.45);
-      }
-      #ar-trigger:active {
-        transform: scale(0.96);
-      }
-      #qr-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.82);
-        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 14px 20px;
+        margin-top: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 99999;
-      }
-      .modal {
-        background: #1c1c1f;
-        padding: 28px;
-        border-radius: 24px;
-        max-width: 320px;
-        width: 85%;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-      }
-      .modal img {
-        width: 180px;
-        height: 180px;
-        background: #fff;
-        padding: 12px;
-        border-radius: 14px;
-        display: block;
-        margin: 15px auto;
-      }
-      .close-btn {
-        background: rgba(255, 255, 255, 0.12);
-        color: #fff;
-        border: none;
-        padding: 9px 24px;
-        border-radius: 20px;
+        gap: 10px;
         cursor: pointer;
+        box-shadow: 0 8px 24px rgba(255, 87, 34, 0.35);
+        transition: transform 0.15s ease;
+      }
+
+      #ar-trigger:active {
+        transform: scale(0.97);
+      }
+
+      /* Kategori Filtresi */
+      .categories {
+        width: 90%;
+        max-width: 420px;
+        display: flex;
+        gap: 8px;
+        margin-top: 22px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .categories::-webkit-scrollbar {
+        display: none;
+      }
+
+      .cat-btn {
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--card-bg);
+        color: #bbb;
+        font-size: 13px;
         font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .cat-btn.active {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+      }
+
+      /* Menü Kartları */
+      .menu-list {
+        width: 90%;
+        max-width: 420px;
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .menu-item {
+        background: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          transform 0.15s ease;
+      }
+
+      .menu-item:active {
+        transform: scale(0.98);
+      }
+
+      .menu-item.active {
+        border-color: var(--primary);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 87, 34, 0.12) 0%,
+          rgba(30, 30, 36, 1) 100%
+        );
+      }
+
+      .item-text h4 {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .item-text span {
+        font-size: 12px;
+        color: var(--text-muted);
+        display: block;
+        margin-top: 2px;
+      }
+
+      .item-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: #eee;
       }
     </style>
   </head>
   <body>
-    <!-- Ürün Butonları -->
-    <div class="menu">
-      <button class="btn active" id="b1" onclick="changeItem('urun1')">
-        Hamburger
-      </button>
-      <button class="btn" id="b2" onclick="changeItem('urun2')">Pizza</button>
-    </div>
+    <header>
+      <div class="brand">Bella <span>Pizza</span></div>
+      <div class="table-badge">Masa 04 • AR Menü</div>
+    </header>
 
-    <!-- 3D Model Kutusu -->
-    <div class="box">
-      <!--
-      WebXR öncelikli hit-test motoru:
-      - ar-modes="webxr quick-look scene-viewer": Tarayıcı düzeyinde zemin aramasını zorunlu kılar.
-      - ar-placement="floor": Zemin bulunana kadar modeli serbest uzayda onaylamaz.
-    -->
+    <!-- 3D Model Vitrini -->
+    <div id="viewer-container">
       <model-viewer
-        id="mv"
-        src="assets/urun1.glb"
-        ios-src="assets/urun1.usdz"
+        id="main-viewer"
+        src="assets/urun2.glb"
+        ios-src="assets/urun2.usdz"
         ar
-        ar-modes="webxr quick-look scene-viewer"
+        ar-modes="webxr scene-viewer quick-look"
         ar-placement="floor"
         camera-controls
         auto-rotate
         rotation-per-second="25deg"
         shadow-intensity="1.5"
+        shadow-softness="0.5"
+        orientation="0deg 0deg 0deg"
       >
       </model-viewer>
     </div>
 
+    <!-- Ürün Detay Bilgisi -->
+    <div id="active-info">
+      <div class="info-left">
+        <h2 id="title-display">Karışık İtalyan Pizza</h2>
+        <p id="desc-display">
+          Mozzarella, mantar, biber, sucuk ve özel fesleğenli domates sosu.
+        </p>
+      </div>
+      <div class="info-price" id="price-display">320 ₺</div>
+    </div>
+
     <!-- Masada Gör Butonu -->
-    <button id="ar-trigger" onclick="handleAR()">
+    <button id="ar-trigger" onclick="handleARLaunch()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path
           d="M3 4c0-1.1.9-2 2-2h4v2H5v4H3V4zm0 16v-4h2v4h4v2H5c-1.1 0-2-.9-2-2zm18 0c0 1.1-.9 2-2 2h-4v-2h4v-4h2v4zM21 4v4h-2V4h-4V2h4c1.1 0 2 .9 2 2zM12 8l-5 3v6l5 3 5-3v-6l-5-3zm0 2.2 3.3 1.8L12 13.8 8.7 12 12 10.2z"
         />
       </svg>
-      Masada Gör
+      Masada 3D İncele
     </button>
 
-    <!-- QR Popup -->
-    <div id="qr-overlay" onclick="closeQR(event)">
-      <div class="modal">
-        <h3 id="qr-name">Hamburger</h3>
-        <p style="font-size: 13px; color: #aaa; margin-top: 5px">
-          QR kodu kameranla tara, masaya koy:
-        </p>
-        <img id="qr-pic" src="" alt="QR" />
-        <button
-          class="close-btn"
-          onclick="document.getElementById('qr-overlay').style.display = 'none'"
-        >
-          Kapat
-        </button>
-      </div>
+    <!-- Kategori Seçici -->
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">
+        Tümü
+      </button>
+      <button class="cat-btn" onclick="filterCategory('pizza', this)">
+        Pizzalar
+      </button>
+      <button class="cat-btn" onclick="filterCategory('burger', this)">
+        Burgerler
+      </button>
+      <button class="cat-btn" onclick="filterCategory('makarna', this)">
+        Makarnalar
+      </button>
     </div>
 
-    <script>
-      const mv = document.getElementById("mv");
-      let current = "urun1";
+    <!-- Dinamik Menü Listesi -->
+    <div class="menu-list" id="items-container"></div>
 
-      const items = {
-        urun1: {
-          name: "Hamburger",
-          glb: "assets/urun1.glb",
-          usdz: "assets/urun1.usdz",
-        },
-        urun2: {
-          name: "Pizza",
+    <script>
+      const viewer = document.getElementById("main-viewer");
+
+      // Menü Veritabanı
+      const menuItems = [
+        {
+          id: "urun2",
+          category: "pizza",
+          title: "Karışık İtalyan Pizza",
+          desc: "Mozzarella, mantar, biber, sucuk ve özel fesleğenli domates sosu.",
+          price: "320 ₺",
           glb: "assets/urun2.glb",
           usdz: "assets/urun2.usdz",
+          orient: "0deg 0deg 0deg",
         },
-      };
+        {
+          id: "urun1",
+          category: "burger",
+          title: "Double Smash Burger",
+          desc: "180g dana köfte, eritilmiş cheddar, karamelize soğan ve füme sos.",
+          price: "280 ₺",
+          glb: "assets/urun1.glb",
+          usdz: "assets/urun1.usdz",
+          orient: "0deg 0deg 0deg",
+        },
+        {
+          id: "urun3",
+          category: "makarna",
+          title: "Penne Arrabbiata",
+          desc: "Acılı İtalyan domates sosu, taze fesleğen, sarımsak ve rendelenmiş parmesan.",
+          price: "240 ₺",
+          glb: "assets/urun3.glb",
+          usdz: "assets/urun3.usdz",
+          orient: "0deg 0deg 0deg",
+        },
+      ];
 
-      function changeItem(key) {
-        current = key;
-        mv.setAttribute("src", items[key].glb);
-        mv.setAttribute("ios-src", items[key].usdz);
-        mv.cameraOrbit = "0deg 75deg 105%";
+      let activeItem = menuItems[0];
 
-        document
-          .getElementById("b1")
-          .classList.toggle("active", key === "urun1");
-        document
-          .getElementById("b2")
-          .classList.toggle("active", key === "urun2");
+      function renderList(cat = "all") {
+        const container = document.getElementById("items-container");
+        container.innerHTML = "";
+
+        const filtered =
+          cat === "all"
+            ? menuItems
+            : menuItems.filter((item) => item.category === cat);
+
+        filtered.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = `menu-item ${item.id === activeItem.id ? "active" : ""}`;
+          div.onclick = () => selectItem(item, div);
+
+          div.innerHTML = `
+          <div class="item-text">
+            <h4>${item.title}</h4>
+            <span>${item.desc.substring(0, 38)}...</span>
+          </div>
+          <div class="item-price">${item.price}</div>
+        `;
+          container.appendChild(div);
+        });
       }
 
-      function handleAR() {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      function selectItem(item, element) {
+        activeItem = item;
 
-        if (isMobile) {
-          mv.activateAR();
+        viewer.setAttribute("src", item.glb);
+        viewer.setAttribute("ios-src", item.usdz);
+        viewer.setAttribute("orientation", item.orient);
+        viewer.cameraOrbit = "0deg 75deg 105%";
+
+        document.getElementById("title-display").innerText = item.title;
+        document.getElementById("desc-display").innerText = item.desc;
+        document.getElementById("price-display").innerText = item.price;
+
+        document
+          .querySelectorAll(".menu-item")
+          .forEach((el) => el.classList.remove("active"));
+        if (element) {
+          element.classList.add("active");
+        }
+      }
+
+      // Doğrudan AR Başlatıcı (iOS'ta native quick-look tetikler, Android'de WebXR)
+      function handleARLaunch() {
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isIOS) {
+          const anchor = document.createElement("a");
+          anchor.setAttribute("rel", "ar");
+          anchor.setAttribute("href", activeItem.usdz);
+          const img = document.createElement("img");
+          anchor.appendChild(img);
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
           return;
         }
 
-        const overlay = document.getElementById("qr-overlay");
-        const qrPic = document.getElementById("qr-pic");
-        document.getElementById("qr-name").innerText =
-          items[current].name + " Masada Gör";
-
-        const url = new URL(window.location.href);
-        url.searchParams.set("item", current);
-
-        qrPic.src =
-          "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
-          encodeURIComponent(url.toString());
-        overlay.style.display = "flex";
+        viewer.activateAR();
       }
 
-      function closeQR(e) {
-        if (e.target.id === "qr-overlay") {
-          document.getElementById("qr-overlay").style.display = "none";
-        }
+      function filterCategory(cat, btn) {
+        document
+          .querySelectorAll(".cat-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderList(cat);
       }
 
       window.addEventListener("DOMContentLoaded", () => {
-        const p = new URLSearchParams(window.location.search).get("item");
-        if (p && items[p]) changeItem(p);
+        renderList("all");
       });
     </script>
   </body>
