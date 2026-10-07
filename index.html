@@ -70,7 +70,7 @@
         border: 1px solid rgba(255, 87, 34, 0.3);
       }
 
-      /* 3D Model Vitrin Alanı */
+      /* 3D Model Vitrini */
       #viewer-container {
         width: 90%;
         max-width: 420px;
@@ -95,7 +95,7 @@
         --poster-color: transparent;
       }
 
-      /* Seçili Ürün Kartı */
+      /* Ürün Detayları */
       #active-info {
         width: 90%;
         max-width: 420px;
@@ -125,7 +125,7 @@
         white-space: nowrap;
       }
 
-      /* Masada Gör AR Butonu */
+      /* Masada Gör Butonu */
       #ar-trigger {
         width: 90%;
         max-width: 420px;
@@ -150,7 +150,7 @@
         transform: scale(0.97);
       }
 
-      /* Kategori Filtresi */
+      /* Kategori Butonları */
       .categories {
         width: 90%;
         max-width: 420px;
@@ -183,7 +183,7 @@
         border-color: #fff;
       }
 
-      /* Menü Kartları */
+      /* Menü Kartları Listesi */
       .menu-list {
         width: 90%;
         max-width: 420px;
@@ -276,7 +276,7 @@
       <div class="info-price" id="price-display">320 ₺</div>
     </div>
 
-    <!-- Masada Gör Butonu -->
+    <!-- Masada Gör Butonu (Doğrudan AR Kamera Bağlantısı) -->
     <button id="ar-trigger" onclick="handleARLaunch()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path
@@ -308,7 +308,6 @@
     <script>
       const viewer = document.getElementById("main-viewer");
 
-      // Menü Veritabanı
       const menuItems = [
         {
           id: "urun2",
@@ -389,7 +388,7 @@
         }
       }
 
-      // Doğrudan AR Başlatıcı (iOS'ta native quick-look tetikler, Android'de WebXR)
+      // iPhone/iOS için doğrudan native Quick Look tetiklemesi, Android için activateAR
       function handleARLaunch() {
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
